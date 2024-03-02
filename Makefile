@@ -1,8 +1,9 @@
-check-env:
-	test -n "$(DATABASE_URL)" || (echo "FATAL: Environment variable DATABASE_URL is not set!"; exit 1)
+guard-%:
+	@ test -n "${${*}}" || (echo "Environment variable ${*} is not set!"; exit 1)
 
-db.migrate: check-env
+db.migrate: guard-DATABASE_URL
 	migrate -database "$(DATABASE_URL)" -path db/migrations up
 
-db.rollback: check-env
+db.rollback: guard-DATABASE_URL
 	migrate -database "$(DATABASE_URL)" -path db/migrations down 1
+
