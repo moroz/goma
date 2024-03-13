@@ -9,23 +9,18 @@ import (
 
 func main() {
 	password := "hunter2"
-	params := &argon2id.Params{
-		Memory:      19 * 1024,
-		Iterations:  2,
-		Parallelism: 1,
-		SaltLength:  16,
-		KeyLength:   16,
-	}
-	hash, err := argon2id.CreateHash(password, params)
+	hash, err := argon2id.CreateHash(password, argon2id.DefaultParams)
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	fmt.Println("Hashed password:", hash)
 
-	match, err := argon2id.ComparePasswordAndHash(password, hash)
-	if err != nil {
-		log.Fatal(err)
+	passwordsToCheck := []string{"hunter2", "Hunter2", "hunter3"}
+	for _, password := range passwordsToCheck {
+		match, err := argon2id.ComparePasswordAndHash(password, hash)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("\"%s\":\t %v\n", password, match)
 	}
-	fmt.Printf("Match: %v\n", match)
 }
