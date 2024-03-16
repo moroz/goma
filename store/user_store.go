@@ -17,7 +17,7 @@ func NewUserStore(db *sqlx.DB) userStore {
 
 func (us *userStore) InsertUser(user *types.User) (*types.User, error) {
 	var result types.User
-	err := us.db.Get(`insert into users (email, password_hash) values ($1, $2) returning *`, user.Email, user.PasswordHash)
+	err := us.db.Get(&result, `insert into users (email, password_hash) values ($1, $2) returning *`, user.Email, user.PasswordHash)
 	if err != nil {
 		return nil, fmt.Errorf("InsertUser: %w", err)
 	}
