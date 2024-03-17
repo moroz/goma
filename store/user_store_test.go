@@ -1,32 +1,32 @@
 package store_test
 
 import (
+	"github.com/jmoiron/sqlx"
 	"github.com/moroz/goma/store"
 	"github.com/moroz/goma/types"
 )
 
-func (s *StoreTestSuite) countUsers() int {
+func countUsers(db *sqlx.DB) (int, error) {
 	var result int
-	row := s.db.QueryRow(`select count(*) from users`)
-	s.NoError(row.Err())
-	err := row.Scan(&result)
-	s.NoError(err)
-	return result
+	err := db.QueryRow(`select count(*) from users`).Scan(&result)
+	return result, err
 }
 
 func (s *StoreTestSuite) TestInsertUser() {
-	password := "test"
+	passwordHash := "test"
 	user := types.User{
 		Email:        "insert@example.com",
-		PasswordHash: &password,
+		PasswordHash: &passwordHash,
 	}
 	us := store.NewUserStore(s.db)
 
-	before := s.countUsers()
-	actual, err := us.InsertUser(&user)
-	after := s.countUsers()
-
+	before, err := countUsers(s.db)
 	s.NoError(err)
+	actual, err := us.InsertUser(&user)
+	s.NoError(err)
+	after, err := countUsers(s.db)
+	s.NoError(err)
+
 	s.Greater(actual.ID, 0)
 	s.Equal(before+1, after)
 }
