@@ -23,3 +23,12 @@ func (us *userStore) InsertUser(user *types.User) (*types.User, error) {
 	}
 	return &result, nil
 }
+
+func (us *userStore) GetUserByEmail(email string) (*types.User, error) {
+	var result types.User
+	err := us.db.Get(&result, `select * from users where email = $1`, email)
+	if err != nil {
+		return nil, fmt.Errorf("GetUserByEmail: %w", err)
+	}
+	return &result, nil
+}
