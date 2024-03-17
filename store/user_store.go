@@ -7,15 +7,15 @@ import (
 	"github.com/moroz/goma/types"
 )
 
-type userStore struct {
+type UserStore struct {
 	db *sqlx.DB
 }
 
-func NewUserStore(db *sqlx.DB) userStore {
-	return userStore{db: db}
+func NewUserStore(db *sqlx.DB) UserStore {
+	return UserStore{db: db}
 }
 
-func (us *userStore) InsertUser(user *types.User) (*types.User, error) {
+func (us *UserStore) InsertUser(user *types.User) (*types.User, error) {
 	var result types.User
 	err := us.db.Get(&result, `insert into users (email, password_hash) values ($1, $2) returning *`, user.Email, user.PasswordHash)
 	if err != nil {
@@ -24,7 +24,7 @@ func (us *userStore) InsertUser(user *types.User) (*types.User, error) {
 	return &result, nil
 }
 
-func (us *userStore) GetUserByEmail(email string) (*types.User, error) {
+func (us *UserStore) GetUserByEmail(email string) (*types.User, error) {
 	var result types.User
 	err := us.db.Get(&result, `select * from users where email = $1`, email)
 	if err != nil {
