@@ -15,9 +15,9 @@ type User struct {
 	UpdatedAt    time.Time `db:"updated_at"`
 }
 
-func (u *User) CheckPassword(password string) (match bool, err error) {
-	if u.PasswordHash == nil || u.PasswordHash == "" {
+func (u *User) CheckPassword(password string) (bool, error) {
+	if u.PasswordHash == nil {
 		return false, errors.New("no password set for the user")
 	}
-	match, err = argon2id.ComparePasswordAndHash()
+	return argon2id.ComparePasswordAndHash(password, *u.PasswordHash)
 }
