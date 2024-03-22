@@ -28,7 +28,7 @@ func (s *ServiceTestSuite) TestAuthenticateUserByEmailPassword() {
 
 	actual, err = srv.AuthenticateUserByEmailPassword(user.Email, "invalid")
 	s.Nil(actual)
-	s.ErrorIs(err, service.InvalidPasswordError)
+	s.ErrorIs(err, types.ErrInvalidPassword)
 
 	actual, err = srv.AuthenticateUserByEmailPassword("invalid@example.com", password)
 	s.Nil(actual)
